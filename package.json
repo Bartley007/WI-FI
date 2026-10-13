@@ -1,0 +1,14 @@
+{
+  "name": "wifi-sense",
+  "private": true,
+  "description": "Camera-free WiFi CSI sensing prototype. Root scripts only; the website is in frontend/ and the Python side in backend/.",
+  "scripts": {
+    "install:frontend": "npm --prefix frontend install",
+    "dev": "node scripts/dev.mjs",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "python3 -m backend.api",
+    "build": "npm --prefix frontend run build",
+    "test": "python3 -m unittest discover -s backend/tests -t .",
+    "check": "npm run test && npm run build"
+  }
+}

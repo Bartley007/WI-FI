@@ -1,0 +1,32 @@
+{
+ "module": "fall_detection",
+ "version": "0.1",
+ "mock": true,
+ "frames": [
+  {
+   "t": 0,
+   "fall_score": 0.02,
+   "state": "normal"
+  },
+  {
+   "t": 12,
+   "fall_score": 0.05,
+   "state": "normal"
+  },
+  {
+   "t": 35,
+   "fall_score": 0.12,
+   "state": "normal"
+  },
+  {
+   "t": 48,
+   "fall_score": 0.86,
+   "state": "suspected"
+  },
+  {
+   "t": 56,
+   "fall_score": 0.93,
+   "state": "alert"
+  }
+ ]
+}

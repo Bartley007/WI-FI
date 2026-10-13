@@ -1,0 +1,32 @@
+{
+ "module": "breathing_detection",
+ "version": "0.1",
+ "mock": true,
+ "frames": [
+  {
+   "t": 0,
+   "status": "not_assessable",
+   "confidence": 0
+  },
+  {
+   "t": 12,
+   "status": "not_assessable",
+   "confidence": 0
+  },
+  {
+   "t": 35,
+   "status": "breathing",
+   "confidence": 0.71
+  },
+  {
+   "t": 48,
+   "status": "not_assessable",
+   "confidence": 0
+  },
+  {
+   "t": 56,
+   "status": "breathing",
+   "confidence": 0.58
+  }
+ ]
+}

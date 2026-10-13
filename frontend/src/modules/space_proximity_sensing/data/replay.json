@@ -1,0 +1,37 @@
+{
+ "module": "space_proximity_sensing",
+ "version": "0.1",
+ "mock": true,
+ "frames": [
+  {
+   "t": 0,
+   "zone": "unknown",
+   "proximity": null,
+   "confidence": 0
+  },
+  {
+   "t": 12,
+   "zone": "doorway",
+   "proximity": "far",
+   "confidence": 0.8
+  },
+  {
+   "t": 35,
+   "zone": "sofa",
+   "proximity": "near",
+   "confidence": 0.82
+  },
+  {
+   "t": 48,
+   "zone": "sofa",
+   "proximity": "near",
+   "confidence": 0.8
+  },
+  {
+   "t": 56,
+   "zone": "sofa",
+   "proximity": "near",
+   "confidence": 0.8
+  }
+ ]
+}

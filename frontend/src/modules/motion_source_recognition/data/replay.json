@@ -1,0 +1,120 @@
+{
+ "module": "motion_source_recognition",
+ "version": "0.1",
+ "mock": true,
+ "frames": [
+  {
+   "t": 0,
+   "label": "Fan",
+   "confidence": 0.82,
+   "probs": {
+    "Human": 0.05,
+    "Pet": 0.07,
+    "IRobot": 0.06,
+    "Fan": 0.82
+   },
+   "quality": {
+    "ok": true
+   }
+  },
+  {
+   "t": 12,
+   "label": "Human",
+   "confidence": 0.91,
+   "probs": {
+    "Human": 0.91,
+    "Pet": 0.04,
+    "IRobot": 0.02,
+    "Fan": 0.03
+   },
+   "quality": {
+    "ok": true
+   }
+  },
+  {
+   "t": 35,
+   "label": "Human",
+   "confidence": 0.94,
+   "probs": {
+    "Human": 0.94,
+    "Pet": 0.03,
+    "IRobot": 0.01,
+    "Fan": 0.02
+   },
+   "quality": {
+    "ok": true
+   }
+  },
+  {
+   "t": 48,
+   "label": "Human",
+   "confidence": 0.93,
+   "probs": {
+    "Human": 0.93,
+    "Pet": 0.03,
+    "IRobot": 0.02,
+    "Fan": 0.02
+   },
+   "quality": {
+    "ok": true
+   }
+  },
+  {
+   "t": 56,
+   "label": "Human",
+   "confidence": 0.92,
+   "probs": {
+    "Human": 0.92,
+    "Pet": 0.04,
+    "IRobot": 0.02,
+    "Fan": 0.02
+   },
+   "quality": {
+    "ok": true
+   }
+  }
+ ],
+ "metrics": {
+  "table": [
+   {
+    "split": "mock",
+    "macroF1": "0.00 \u00b1 0.00",
+    "note": "replace with real results"
+   }
+  ],
+  "confusion": {
+   "labels": [
+    "Human",
+    "Pet",
+    "IRobot",
+    "Fan"
+   ],
+   "matrix": [
+    [
+     90,
+     5,
+     3,
+     2
+    ],
+    [
+     6,
+     88,
+     4,
+     2
+    ],
+    [
+     2,
+     3,
+     93,
+     2
+    ],
+    [
+     1,
+     1,
+     2,
+     96
+    ]
+   ]
+  }
+ }
+}

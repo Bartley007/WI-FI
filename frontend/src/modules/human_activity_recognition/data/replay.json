@@ -1,0 +1,37 @@
+{
+ "module": "human_activity_recognition",
+ "version": "0.1",
+ "mock": true,
+ "frames": [
+  {
+   "t": 0,
+   "activity": "none",
+   "confidence": 0,
+   "stable": false
+  },
+  {
+   "t": 12,
+   "activity": "Walking",
+   "confidence": 0.88,
+   "stable": true
+  },
+  {
+   "t": 35,
+   "activity": "Sitting",
+   "confidence": 0.79,
+   "stable": true
+  },
+  {
+   "t": 48,
+   "activity": "Transition",
+   "confidence": 0.41,
+   "stable": false
+  },
+  {
+   "t": 56,
+   "activity": "Uncertain",
+   "confidence": 0.35,
+   "stable": false
+  }
+ ]
+}

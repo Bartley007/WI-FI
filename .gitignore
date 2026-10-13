@@ -1,0 +1,13 @@
+.claude/
+.idea/
+.vscode/
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+dist/
+.env.local
+backend/modules/*/outputs/*
+!backend/modules/*/outputs/.gitkeep
+!backend/modules/*/outputs/replay.json
