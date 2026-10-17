@@ -104,13 +104,70 @@ def read_metadata(path: Path) -> list[dict[str, str]]:
         return [dict(row) for row in csv.DictReader(handle)]
 
 
+def _resolve_sample_path(
+    *,
+    relative: str,
+    task_root: Path,
+    metadata_path: Path,
+    data_root: Path | None,
+    sample_root: Path,
+) -> Path | None:
+    candidate = Path(relative)
+    bases = [metadata_path.parent, task_root, sample_root]
+    if data_root is not None:
+        bases.append(data_root)
+    if candidate.is_absolute():
+        return candidate if candidate.exists() else None
+    for base in bases:
+        resolved = (base / candidate).resolve()
+        if resolved.exists():
+            return resolved
+    # Metadata may use a path relative to the dataset root while the H5 files
+    # are kept in the shared sample root, e.g. Multitask/sub_Human_h5/...
+    parts = candidate.parts
+    for anchor in ("sub_Human_h5", "sub_Human_mat"):
+        if anchor in parts:
+            tail = Path(*parts[parts.index(anchor) + 1 :])
+            resolved = (sample_root / tail).resolve()
+            if resolved.exists():
+                return resolved
+    return None
+
+
+def read_split_files(task_root: Path, split_dir: str) -> dict[str, str]:
+    directory = task_root / split_dir
+    mapping: dict[str, str] = {}
+    for split in ("train", "val", "test"):
+        for name in (f"{split}_id.json", f"test_{split}.json" if split == "test" else ""):
+            if not name:
+                continue
+            path = directory / name
+            if not path.exists():
+                continue
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                raise DataValidationError("split file is not valid JSON", {"path": str(path)}) from exc
+            if not isinstance(payload, list):
+                raise DataValidationError("split file must contain a JSON list", {"path": str(path)})
+            for value in payload:
+                text = str(value)
+                mapping[text] = split
+                mapping[Path(text).name] = split
+    return mapping
+
+
 def discover_records(config: AppConfig, policy: AccessPolicy, *, actor: str = "system") -> list[SampleRecord]:
     if config.task_root is None:
         raise DataNotFoundError("dataset root is not configured", {"env_names": ["HAR_DATA_ROOT", "CSI_DATA_ROOT"]})
     task_root = policy.authorize_read(actor, config.task_root)
     if not task_root.exists():
         raise DataNotFoundError("task directory does not exist", {"path": str(task_root)})
+    sample_root = (task_root / config.dataset.sample_root).resolve() if config.dataset.sample_root else task_root
+    if not sample_root.exists():
+        raise DataNotFoundError("shared sample directory does not exist", {"path": str(sample_root)})
     metadata_path = task_root / config.dataset.metadata_file
+    split_map = read_split_files(task_root, config.dataset.split_dir)
     rows = read_metadata(policy.authorize_read(actor, metadata_path)) if metadata_path.exists() else []
     records: list[SampleRecord] = []
     if rows:
@@ -118,26 +175,48 @@ def discover_records(config: AppConfig, policy: AccessPolicy, *, actor: str = "s
             relative = _pick(row, META_FIELDS["path"])
             if not relative:
                 continue
-            candidate = Path(relative)
-            path = policy.authorize_read(actor, task_root / candidate if not candidate.is_absolute() else candidate)
+            resolved_sample = _resolve_sample_path(
+                relative=relative,
+                task_root=task_root,
+                metadata_path=metadata_path,
+                data_root=config.data_root,
+                sample_root=sample_root,
+            )
+            if resolved_sample is None:
+                raise DataNotFoundError("metadata sample path does not exist", {"path": relative})
+            path = policy.authorize_read(actor, resolved_sample)
             activity = canonical_activity(_pick(row, META_FIELDS["activity"]), allow_decision_state=False).value
-            ids = _path_ids(path.relative_to(task_root))
-            record_id = _pick(row, META_FIELDS["sample_id"]) or stable_sample_id(path.relative_to(task_root), index)
+            if path.is_relative_to(task_root):
+                source_relative = path.relative_to(task_root)
+            elif path.is_relative_to(sample_root):
+                source_relative = path.relative_to(sample_root)
+            else:
+                raise DataValidationError("sample is outside task and sample roots", {"path": str(path)})
+            ids = _path_ids(source_relative)
+            record_id = _pick(row, META_FIELDS["sample_id"]) or stable_sample_id(source_relative, index)
+            declared_split = _split_name(_pick(row, META_FIELDS["split"]))
             records.append(
                 SampleRecord(
-                    sample_id=stable_sample_id(record_id, path.relative_to(task_root), index),
+                    sample_id=stable_sample_id(record_id, source_relative, index),
                     path=path,
                     session_id=_pick(row, META_FIELDS["session_id"]) or ids["session_id"],
                     user_id=_pick(row, META_FIELDS["user_id"]) or ids["user_id"],
                     environment_id=_pick(row, META_FIELDS["environment_id"]) or ids["environment_id"],
                     device_id=_pick(row, META_FIELDS["device_id"]) or ids["device_id"],
                     activity=activity,
-                    split=_split_name(_pick(row, META_FIELDS["split"])),
+                    split=(
+                        declared_split
+                        if declared_split != "unknown"
+                        else split_map.get(record_id)
+                        or split_map.get(Path(relative).name)
+                        or split_map.get(relative)
+                        or "unknown"
+                    ),
                     metadata={str(k): str(v) for k, v in row.items()},
                 )
             )
     if not records:
-        for path in sorted(task_root.glob(config.dataset.h5_glob)):
+        for path in sorted(sample_root.glob(config.dataset.h5_glob)):
             resolved = policy.authorize_read(actor, path)
             relative_path = resolved.relative_to(task_root)
             ids = _path_ids(relative_path)

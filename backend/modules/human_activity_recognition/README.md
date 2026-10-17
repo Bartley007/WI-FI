@@ -41,13 +41,24 @@ python3 -m backend.modules.human_activity_recognition.cli show-config
 python3 -m backend.modules.human_activity_recognition.cli self-check
 ```
 
-Real data:
+Local fixture only:
 
 ```bash
-export HAR_DATA_ROOT="/path/to/csi-bench"
+python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py --epochs 2
+```
+
+Prepare only the module's real-data subset from an existing Kaggle ZIP:
+
+```bash
+python3 backend/modules/human_activity_recognition/scripts/prepare_local_subset.py \
+  --archive /path/to/csi-bench.zip \
+  --destination backend/modules/human_activity_recognition/local_data/csi_bench_module_b
+export HAR_DATA_ROOT="$PWD/backend/modules/human_activity_recognition/local_data/csi_bench_module_b"
 python3 -m backend.modules.human_activity_recognition.cli manifest
 python3 -m backend.modules.human_activity_recognition.cli train --model cnn_transformer
 ```
+
+The subset contains only `Multitask/HumanActivityRecognition/` and `Multitask/sub_Human_h5/`. Unrelated task directories are never extracted.
 
 Replay-only development:
 
@@ -79,4 +90,4 @@ npm --prefix frontend run build
 
 ## Current limitation
 
-The code path and synthetic end-to-end pipeline are implemented and tested. The full csi-bench dataset is not committed; the real benchmark numbers remain pending until the dataset is available locally. The bundled website replay therefore remains a fixture (`mock: true`).
+The code path and local HDF5 fixture pipeline are implemented and tested. The full csi-bench dataset is not committed; extract only the Module B subset with `prepare_local_subset.py`. Real benchmark numbers remain pending until that subset is available locally, so the bundled website replay remains a fixture (`mock: true`).

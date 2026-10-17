@@ -100,13 +100,16 @@ Adding optional fields is compatible. Removing or renaming required fields requi
 Expected csi-bench layout, subject to `config.yaml`:
 
 ```text
-<data_root>/
-  metadata/sample_metadata.csv
-  metadata/label_mapping.json
-  splits/*.json
-  sub_Human_h5/**/*.h5
-  sub_Human_mat/**/*.mat
+<local_subset_root>/
+  Multitask/
+    HumanActivityRecognition/
+      metadata/sample_metadata.csv
+      metadata/label_mapping.json
+      splits/*.json
+    sub_Human_h5/**/*.h5
 ```
+
+Only the two `Multitask` directories above are required for Module B; unrelated task data is never extracted into the local subset.
 
 The loader:
 

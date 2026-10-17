@@ -26,7 +26,8 @@
 - [x] Boundary tests.
 - [x] Permission tests.
 - [x] Performance smoke test.
-- [ ] Real csi-bench benchmark run (requires local dataset download).
+- [x] Local HDF5 fixture trains and exports without the full dataset
+- [ ] Real Module B subset benchmark run (requires the selected subset only).
 
 ## Delivery
 

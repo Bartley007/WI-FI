@@ -1,6 +1,7 @@
 module_id: human_activity_recognition
 dataset:
-  task_dir: HumanActivityRecognition
+  task_dir: Multitask/HumanActivityRecognition
+  sample_root: ../sub_Human_h5
   metadata_file: metadata/sample_metadata.csv
   label_mapping_file: metadata/label_mapping.json
   split_dir: splits

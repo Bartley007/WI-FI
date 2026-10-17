@@ -10,14 +10,18 @@
 Expected task layout is configurable. The default is:
 
 ```text
-<data_root>/
-  HumanActivityRecognition/
-    metadata/sample_metadata.csv
-    metadata/label_mapping.json
-    splits/
+<local_subset_root>/
+  Multitask/
+    HumanActivityRecognition/
+      metadata/sample_metadata.csv
+      metadata/label_mapping.json
+      splits/
     sub_Human_h5/
-      user_*/act_*/env_*/device_*/session_*.h5
+      **/*.h5
 ```
+
+Only these two directories are required. Do not extract unrelated task directories. Use
+`scripts/prepare_local_subset.py` to copy or extract only this subset and verify the result.
 
 ## Sample record
 

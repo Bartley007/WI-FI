@@ -21,6 +21,7 @@ DEFAULT_CONFIG = Path(__file__).with_name("config.yaml")
 @dataclass(frozen=True)
 class DatasetConfig:
     task_dir: str
+    sample_root: str
     metadata_file: str
     label_mapping_file: str
     split_dir: str
@@ -170,6 +171,7 @@ def load_config(path: str | Path | None = None, *, env: Mapping[str, str] | None
 
     dataset = DatasetConfig(
         task_dir=str(ds["task_dir"]),
+        sample_root=str(ds.get("sample_root", ".")),
         metadata_file=str(ds["metadata_file"]),
         label_mapping_file=str(ds["label_mapping_file"]),
         split_dir=str(ds["split_dir"]),
