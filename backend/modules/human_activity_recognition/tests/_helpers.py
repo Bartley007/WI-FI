@@ -11,7 +11,8 @@ from ..config import AppConfig, load_config
 def config_for(tmp_path: Path, **overrides) -> AppConfig:
     data_root = tmp_path / "data"
     data_root.mkdir(parents=True, exist_ok=True)
-    (data_root / "HumanActivityRecognition").mkdir(parents=True, exist_ok=True)
+    (data_root / "Multitask" / "HumanActivityRecognition").mkdir(parents=True, exist_ok=True)
+    (data_root / "Multitask" / "sub_Human_h5").mkdir(parents=True, exist_ok=True)
     output_root = tmp_path / "outputs"
     output_root.mkdir(parents=True, exist_ok=True)
     config = load_config(env={"HAR_DATA_ROOT": str(data_root), "HAR_OUTPUT_ROOT": str(output_root)})

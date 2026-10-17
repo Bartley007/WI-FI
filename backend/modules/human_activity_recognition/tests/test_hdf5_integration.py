@@ -36,9 +36,10 @@ class HDF5IntegrationTest(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            task = root / "data" / "HumanActivityRecognition"
+            task = root / "data" / "Multitask" / "HumanActivityRecognition"
+            sample_root = root / "data" / "Multitask" / "sub_Human_h5"
             (task / "metadata").mkdir(parents=True)
-            (task / "samples").mkdir()
+            sample_root.mkdir(parents=True)
             rows = [
                 ("standing", "train", "s1", "u1", "e1", "d1"),
                 ("sitting", "val", "s2", "u2", "e2", "d2"),
@@ -47,9 +48,9 @@ class HDF5IntegrationTest(unittest.TestCase):
             ]
             metadata = ["path,activity,split,session_id,user_id,environment_id,device_id"]
             for index, (activity, split, session, user, environment, device) in enumerate(rows):
-                relative = f"samples/{index}.h5"
+                relative = f"../../sub_Human_h5/{index}.h5"
                 metadata.append(f"{relative},{activity},{split},{session},{user},{environment},{device}")
-                with h5py.File(task / relative, "w") as handle:
+                with h5py.File(sample_root / f"{index}.h5", "w") as handle:
                     handle.create_dataset("CSI_amps", data=np.ones((8, 32), dtype=np.float32))
             (task / "metadata" / "sample_metadata.csv").write_text("\n".join(metadata))
             config = replace(
