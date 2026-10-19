@@ -36,7 +36,7 @@ The script copies only `Multitask/HumanActivityRecognition/` and `Multitask/sub_
 A deterministic 408 KB HDF5 fixture is committed under `fixtures/mini_csi_bench`:
 
 ```bash
-python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py --epochs 2
+python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py
 ```
 
 It exercises the real HDF5 reader, metadata and split loader, training loop and replay export without downloading csi-bench. Its metrics are synthetic and must not be reported as benchmark results.

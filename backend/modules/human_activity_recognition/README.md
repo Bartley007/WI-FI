@@ -44,7 +44,7 @@ python3 -m backend.modules.human_activity_recognition.cli self-check
 Local fixture only:
 
 ```bash
-python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py --epochs 2
+python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py
 ```
 
 Prepare only the module's real-data subset from an existing Kaggle ZIP:
