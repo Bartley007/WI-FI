@@ -23,5 +23,5 @@ python3 backend/modules/human_activity_recognition/scripts/make_local_fixture.py
 Run the full training/replay path with:
 
 ```bash
-python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py --epochs 2
+python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py
 ```

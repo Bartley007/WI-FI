@@ -32,10 +32,10 @@ def main() -> int:
         for index in range(4):
             sample_id = f"{label}-{index:02d}"
             split = "train" if index < 2 else "val" if index == 2 else "test"
-            signal = rng.normal(0.0, 0.03, size=(232, 24)).astype(np.float32)
-            signal[class_id * 8 : class_id * 8 + 8] += np.sin(np.linspace(0, 4 * np.pi, 24, dtype=np.float32)) * (
-                class_id + 1
-            )
+            signal = rng.normal(0.0, 0.01, size=(232, 24)).astype(np.float32)
+            block = slice(class_id * 48, (class_id + 1) * 48)
+            phase = np.linspace(0, 2 * np.pi * (class_id + 1), 24, dtype=np.float32)
+            signal[block] += (3.0 + class_id) * np.sin(phase) + (class_id - 1.5) * 0.5
             with h5py.File(SAMPLES / f"{sample_id}.h5", "w") as handle:
                 handle.create_dataset("CSI_amps", data=signal)
             splits[split].append(sample_id)

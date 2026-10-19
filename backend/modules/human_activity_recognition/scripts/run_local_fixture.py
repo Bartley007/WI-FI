@@ -21,7 +21,7 @@ def main() -> int:
 
     parser = argparse.ArgumentParser(description="Run Module B using the local synthetic csi-bench fixture")
     parser.add_argument("--model", default="cnn_1d")
-    parser.add_argument("--epochs", type=int, default=2)
+    parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
     fixture = ROOT / "backend/modules/human_activity_recognition/fixtures/mini_csi_bench"
