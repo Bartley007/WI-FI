@@ -130,6 +130,16 @@ The official test result has already been observed. It must not be reused for
 threshold selection, seed selection, or development of later interference
 gates.
 
+## Assessability gates
+
+`inference/gating.py` implements the ordered decision layer around the frozen
+model: low quality, motion, Fan evidence, calibrated periodic interference,
+and temporal instability take precedence over `breathing` or `none`. Optional
+external evidence remains unavailable when omitted; it is not silently treated
+as zero risk. The current implementation and the remaining validation-only
+calibration work are described in
+[`GATING_DESIGN.md`](GATING_DESIGN.md).
+
 ## Frame fields
 
 Defined in `contract.py`, besides `t` (seconds).

@@ -6,6 +6,7 @@ export default {
   preprocessing: [
     p("Read and validate the BreathingDetection official splits", "done"),
     p("Mark low signal quality and fan-like periodic signals", "doing"),
+    p("Apply ordered quality, motion, Fan, periodic and stability gates", "doing"),
   ],
   training: [
     p("Traditional baseline: spectral peak, autocorrelation, subcarrier consistency", "done"),
@@ -17,6 +18,6 @@ export default {
   ],
   evaluation: [
     p("Recall, precision and F1; empty room, motion and fan interference analysis", "doing"),
-    p("Output \"not assessable\" when activity recognition sees clear motion, motion source recognition gives high Fan probability or quality is low"),
+    p("Output \"not assessable\" when activity recognition sees clear motion, motion source recognition gives high Fan probability or quality is low", "doing"),
   ],
 }
