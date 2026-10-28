@@ -16,7 +16,7 @@ class LocalFixtureTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             config = load_config(env={"HAR_DATA_ROOT": str(fixture), "HAR_OUTPUT_ROOT": tmp})
             bundle = load_dataset_split(config, build_policy(config))
-        self.assertEqual((len(bundle.train), len(bundle.validation), len(bundle.test)), (8, 4, 4))
+        self.assertEqual((len(bundle.train), len(bundle.validation), len(bundle.test)), (10, 5, 5))
         self.assertEqual(bundle.train.windows[0].shape, (232, 24))
 
     def test_fixture_is_learnable_for_both_models(self):
@@ -29,7 +29,7 @@ class LocalFixtureTest(unittest.TestCase):
             base = load_config(env={"HAR_DATA_ROOT": str(fixture), "HAR_OUTPUT_ROOT": tmp})
             config = replace(
                 base,
-                model=replace(base.model, epochs=50, patience=5, hidden_dim=32, seeds=(42,)),
+                model=replace(base.model, epochs=60, patience=8, hidden_dim=16, seeds=(42,)),
             )
             bundle = load_dataset_split(config, build_policy(config))
             for model_name in ("cnn_1d", "cnn_transformer"):

@@ -1,9 +1,10 @@
 const COLORS = {
-  standing: '#22E4FF',
-  sitting: '#FFB347',
-  walking: '#7CFFB2',
-  lying: '#FF7AA2',
-  transition: '#C4A7FF',
+  jumping: '#22E4FF',
+  running: '#FFB347',
+  'seated-breathing': '#7CFFB2',
+  walking: '#FF7AA2',
+  wavinghand: '#C4A7FF',
+  transition: '#FFD166',
   unknown: '#8B8FA8',
 }
 

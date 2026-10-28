@@ -13,7 +13,7 @@ Returns the JSON written by `backend.shared.export.write_replay`.
 | Field | Type | Rule |
 |---|---|---|
 | `t` | number | non-decreasing replay time in seconds |
-| `activity` | string | `standing`, `sitting`, `walking`, `lying`, `transition` or `unknown` |
+| `activity` | string | `jumping`, `running`, `seated-breathing`, `walking`, `wavinghand`, `transition` or `unknown` |
 | `confidence` | number | `[0, 1]` |
 | `stable` | boolean | true only for a stable, sufficiently confident state |
 
@@ -21,7 +21,7 @@ Returns the JSON written by `backend.shared.export.write_replay`.
 
 | Field | Type | Rule |
 |---|---|---|
-| `activity_id` | integer or null | 0..3 for stable states, null otherwise |
+| `activity_id` | integer or null | 0..4 for stable states, null otherwise |
 | `probabilities` | object | stable-id to probability, sums to 1 |
 | `stability` | number | `[0, 1]` |
 | `quality` | string | `good`, `degraded` or `invalid` |

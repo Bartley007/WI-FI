@@ -10,14 +10,16 @@ dataset:
   expected_feature_size: 232
   window_seconds: 5.0
   min_frames: 20
+  split_group_fields: [session_id]
   max_abs_amplitude: 100000.0
+  normalization: window_zscore
   allowed_roles:
     - system
     - researcher
 model:
   default_name: cnn_transformer
   candidates: [cnn_1d, cnn_transformer]
-  class_ids: [standing, sitting, walking, lying]
+  class_ids: [jumping, running, seated-breathing, walking, wavinghand]
   batch_size: 64
   epochs: 40
   learning_rate: 0.001
@@ -31,6 +33,22 @@ model:
   transformer_layers: 2
   max_parameters: 5000000
   seeds: [42, 43, 44]
+  augmentation:
+    enabled: false
+    max_shift: 8
+    amplitude_scale: 0.05
+    noise_std: 0.005
+spectral:
+  top_features: 2800
+  extra_models: 1
+  trees_per_model: 900
+  min_samples_leaf: 3
+  max_features: 0.5
+  histogram_weight: 0.0
+  histogram_iterations: 500
+  histogram_learning_rate: 0.06
+  histogram_leaf_nodes: 31
+  histogram_l2: 0.0001
 runtime:
   mode: local
   remote_endpoint_env: HAR_REMOTE_ENDPOINT

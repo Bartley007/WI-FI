@@ -31,7 +31,7 @@ from ..preprocessing import (
 )
 from ..preprocessing.hdf5_reader import read_csi_array
 from ..security import AccessPolicy
-from ..training import ModelSpec, TrainingSettings, predict_logits, train_model
+from ..training import AugmentationConfig, ModelSpec, TrainingSettings, predict_logits, train_model
 
 
 @dataclass(frozen=True)
@@ -73,7 +73,7 @@ def load_dataset_split(config: AppConfig, policy: AccessPolicy, *, actor: str = 
         )
         for record in records
     ]
-    assert_no_split_leakage(normalised)
+    assert_no_split_leakage(normalised, group_fields=config.dataset.split_group_fields)
     buckets: dict[str, list[tuple[np.ndarray, int, SampleRecord]]] = {"train": [], "val": [], "test": []}
     for record in normalised:
         array = read_csi_array(record.path, config.dataset.hdf5_key_candidates)
@@ -96,7 +96,7 @@ def load_dataset_split(config: AppConfig, policy: AccessPolicy, *, actor: str = 
         raise DataValidationError(
             "official splits must all be non-empty", {key: len(value) for key, value in buckets.items()}
         )
-    stats = FeatureStats.fit(window for window, _, _ in buckets["train"])
+    stats = FeatureStats.fit((window for window, _, _ in buckets["train"]), mode=config.dataset.normalization)
     return SplitBundle(
         train=_dataset(buckets["train"]),
         validation=_dataset(buckets["val"]),
@@ -140,7 +140,7 @@ def synthetic_split_bundle(
     train = [i for i, record in enumerate(records) if record.split == "train"]
     val = [i for i, record in enumerate(records) if record.split == "val"]
     test = [i for i, record in enumerate(records) if record.split == "test"]
-    stats = FeatureStats.fit(windows[i] for i in train)
+    stats = FeatureStats.fit((windows[i] for i in train), mode="global_zscore")
     return SplitBundle(
         train=WindowDataset([windows[i] for i in train], [labels[i] for i in train], [records[i] for i in train]),
         validation=WindowDataset([windows[i] for i in val], [labels[i] for i in val], [records[i] for i in val]),
@@ -172,7 +172,7 @@ def run_single_model(
     checkpoint_path: Path | None = None,
     output_dir: Path | None = None,
     mock: bool = False,
-    version: str = "0.2.0",
+    version: str = "0.3.0",
 ) -> dict:
     feature_size = bundle.train.windows[0].shape[0]
     spec = model_spec_from_config(config, model_name, feature_size)
@@ -185,6 +185,12 @@ def run_single_model(
         patience=config.model.patience,
         max_parameters=config.model.max_parameters,
         seed=seed,
+        augmentation=AugmentationConfig(
+            enabled=config.model.augmentation_enabled and not mock,
+            max_shift=config.model.augmentation_max_shift,
+            amplitude_scale=config.model.augmentation_amplitude_scale,
+            noise_std=config.model.augmentation_noise_std,
+        ),
     )
     model_version = f"{model_name}-seed{seed}-{config.config_hash}"
     with operation("train_model", model=model_name, seed=seed, samples=len(bundle.train)):
@@ -199,8 +205,44 @@ def run_single_model(
             model_version=model_version,
             feature_stats=bundle.stats.to_dict(),
         )
-    logits = predict_logits(result.model, bundle.test.windows, batch_size=config.runtime.max_batch_size)
-    probabilities = _softmax(logits)
+    split_metrics: dict[str, dict] = {}
+    split_observations: dict[str, list[dict]] = {}
+    split_probabilities: dict[str, np.ndarray] = {}
+    for split_name, dataset in (("validation", bundle.validation), ("test", bundle.test)):
+        windows = [bundle.stats.transform(window) for window in dataset.windows]
+        logits = predict_logits(result.model, windows, batch_size=config.runtime.max_batch_size)
+        split_probabilities[split_name] = _softmax(logits)
+        predicted = split_probabilities[split_name].argmax(axis=1).tolist()
+        split_metrics[split_name] = classification_metrics(
+            dataset.labels, predicted, len(config.model.class_ids)
+        ).to_dict()
+        split_observations[split_name] = [
+            {
+                "sample_id": record.sample_id,
+                "true": int(label),
+                "predicted": int(prediction),
+                "user": record.user_id,
+                "environment": record.environment_id,
+                "device": record.device_id,
+                "session": record.session_id,
+            }
+            for record, label, prediction in zip(dataset.records, dataset.labels, predicted, strict=True)
+        ]
+
+    subset_metrics: dict[str, dict] = {}
+    for split_name in ("validation", "test"):
+        dataset = bundle.validation if split_name == "validation" else bundle.test
+        predicted = split_probabilities[split_name].argmax(axis=1).tolist()
+        subset_metrics[f"{split_name}_all"] = split_metrics[split_name]
+        known_device = [index for index, record in enumerate(dataset.records) if record.device_id.upper() == "HP"]
+        if known_device:
+            subset_metrics[f"{split_name}_known_device"] = classification_metrics(
+                [dataset.labels[index] for index in known_device],
+                [predicted[index] for index in known_device],
+                len(config.model.class_ids),
+            ).to_dict()
+
+    probabilities = split_probabilities["test"]
     predictions = [
         Prediction(
             activity=ActivityState(config.model.class_ids[int(index)])
@@ -215,16 +257,13 @@ def run_single_model(
         )
         for row, index in enumerate(probabilities.argmax(axis=1))
     ]
-    metrics = classification_metrics(
-        bundle.test.labels, probabilities.argmax(axis=1).tolist(), len(config.model.class_ids)
-    )
-    metrics_payload = metrics.to_dict()
+    metrics_payload = split_metrics["test"]
     replay = ReplayArtifacts(
         module="human_activity_recognition",
         version=version,
         model_version=model_version,
         frames=frames_from_predictions(predictions, window_seconds=config.dataset.window_seconds),
-        metrics=make_metrics_block(metrics_payload, config.model.class_ids, metrics.confusion),
+        metrics=make_metrics_block(metrics_payload, config.model.class_ids, metrics_payload["confusion"]),
         preprocessing={
             "tiles": [
                 {"label": "train", "value": len(bundle.train.windows)},
@@ -256,8 +295,15 @@ def run_single_model(
     payload = replay.payload()
     if output_dir is not None:
         output_dir.mkdir(parents=True, exist_ok=True)
+        evaluation_payload = {
+            "metrics": metrics_payload,
+            "split_metrics": split_metrics,
+            "subset_metrics": subset_metrics,
+            "observations": split_observations,
+            "training": result.metadata,
+        }
         (output_dir / "evaluation.json").write_text(
-            json.dumps({"metrics": metrics_payload, "training": result.metadata}, indent=2, sort_keys=True),
+            json.dumps(evaluation_payload, indent=2, sort_keys=True),
             encoding="utf-8",
         )
         export_artifacts(replay, bundle=False, output_root=output_dir)

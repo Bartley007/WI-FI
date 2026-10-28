@@ -41,10 +41,10 @@ class HDF5IntegrationTest(unittest.TestCase):
             (task / "metadata").mkdir(parents=True)
             sample_root.mkdir(parents=True)
             rows = [
-                ("standing", "train", "s1", "u1", "e1", "d1"),
-                ("sitting", "val", "s2", "u2", "e2", "d2"),
+                ("jumping", "train", "s1", "u1", "e1", "d1"),
+                ("running", "val", "s2", "u2", "e2", "d2"),
                 ("walking", "test", "s3", "u3", "e3", "d3"),
-                ("lying", "train", "s4", "u4", "e4", "d4"),
+                ("seated-breathing", "train", "s4", "u4", "e4", "d4"),
             ]
             metadata = ["path,activity,split,session_id,user_id,environment_id,device_id"]
             for index, (activity, split, session, user, environment, device) in enumerate(rows):

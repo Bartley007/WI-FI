@@ -12,18 +12,18 @@ from ..domain import ActivityState
 from ..errors import DataValidationError, InputValidationError
 
 _ALIASES = {
-    "stand": ActivityState.STANDING,
-    "standing": ActivityState.STANDING,
-    "stood": ActivityState.STANDING,
-    "sit": ActivityState.SITTING,
-    "sitting": ActivityState.SITTING,
-    "seated": ActivityState.SITTING,
+    "jump": ActivityState.JUMPING,
+    "jumping": ActivityState.JUMPING,
+    "run": ActivityState.RUNNING,
+    "running": ActivityState.RUNNING,
+    "seatedbreathing": ActivityState.SEATED_BREATHING,
+    "seated": ActivityState.SEATED_BREATHING,
+    "sitbreathing": ActivityState.SEATED_BREATHING,
     "walk": ActivityState.WALKING,
     "walking": ActivityState.WALKING,
-    "lie": ActivityState.LYING,
-    "lying": ActivityState.LYING,
-    "lyingdown": ActivityState.LYING,
-    "reclining": ActivityState.LYING,
+    "wave": ActivityState.WAVING_HAND,
+    "waving": ActivityState.WAVING_HAND,
+    "wavinghand": ActivityState.WAVING_HAND,
     "transition": ActivityState.TRANSITION,
     "unknown": ActivityState.UNKNOWN,
 }

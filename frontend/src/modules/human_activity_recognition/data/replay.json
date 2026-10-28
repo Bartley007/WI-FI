@@ -1,68 +1,78 @@
 {
  "module": "human_activity_recognition",
- "version": "0.2.0",
+ "version": "0.3.0",
  "mock": true,
  "model_version": "fixture-cnn-transformer",
  "frames": [
   {
    "t": 0,
-   "activity": "standing",
+   "activity": "jumping",
    "activity_id": 0,
-   "confidence": 0.86,
+   "confidence": 0.88,
    "stable": true,
-   "probabilities": {"standing": 0.86, "sitting": 0.05, "walking": 0.07, "lying": 0.02},
-   "stability": 0.79,
+   "probabilities": {"jumping": 0.88, "running": 0.04, "seated-breathing": 0.02, "walking": 0.03, "wavinghand": 0.03},
+   "stability": 0.81,
    "quality": "good"
   },
   {
    "t": 5,
-   "activity": "walking",
-   "activity_id": 2,
+   "activity": "running",
+   "activity_id": 1,
    "confidence": 0.9,
    "stable": true,
-   "probabilities": {"standing": 0.04, "sitting": 0.02, "walking": 0.9, "lying": 0.04},
-   "stability": 0.86,
+   "probabilities": {"jumping": 0.03, "running": 0.9, "seated-breathing": 0.02, "walking": 0.03, "wavinghand": 0.02},
+   "stability": 0.84,
    "quality": "good"
   },
   {
    "t": 10,
    "activity": "transition",
    "activity_id": null,
-   "confidence": 0.48,
+   "confidence": 0.47,
    "stable": false,
    "transition": true,
-   "probabilities": {"standing": 0.31, "sitting": 0.48, "walking": 0.09, "lying": 0.12},
-   "stability": 0.18,
+   "probabilities": {"jumping": 0.08, "running": 0.47, "seated-breathing": 0.15, "walking": 0.18, "wavinghand": 0.12},
+   "stability": 0.17,
    "quality": "good"
   },
   {
    "t": 15,
-   "activity": "sitting",
-   "activity_id": 1,
-   "confidence": 0.82,
+   "activity": "seated-breathing",
+   "activity_id": 2,
+   "confidence": 0.84,
    "stable": true,
-   "probabilities": {"standing": 0.08, "sitting": 0.82, "walking": 0.03, "lying": 0.07},
-   "stability": 0.72,
+   "probabilities": {"jumping": 0.02, "running": 0.02, "seated-breathing": 0.84, "walking": 0.05, "wavinghand": 0.07},
+   "stability": 0.76,
    "quality": "good"
   },
   {
    "t": 20,
-   "activity": "lying",
+   "activity": "walking",
    "activity_id": 3,
-   "confidence": 0.88,
+   "confidence": 0.87,
    "stable": true,
-   "probabilities": {"standing": 0.03, "sitting": 0.05, "walking": 0.04, "lying": 0.88},
-   "stability": 0.81,
+   "probabilities": {"jumping": 0.02, "running": 0.06, "seated-breathing": 0.02, "walking": 0.87, "wavinghand": 0.03},
+   "stability": 0.8,
    "quality": "good"
   },
   {
    "t": 25,
+   "activity": "wavinghand",
+   "activity_id": 4,
+   "confidence": 0.82,
+   "stable": true,
+   "probabilities": {"jumping": 0.03, "running": 0.02, "seated-breathing": 0.02, "walking": 0.11, "wavinghand": 0.82},
+   "stability": 0.71,
+   "quality": "good"
+  },
+  {
+   "t": 30,
    "activity": "unknown",
    "activity_id": null,
    "confidence": 0.39,
    "stable": false,
-   "probabilities": {"standing": 0.23, "sitting": 0.24, "walking": 0.14, "lying": 0.39},
-   "stability": 0.09,
+   "probabilities": {"jumping": 0.18, "running": 0.22, "seated-breathing": 0.39, "walking": 0.12, "wavinghand": 0.09},
+   "stability": 0.08,
    "quality": "degraded"
   }
  ],
@@ -94,11 +104,11 @@
  "metrics": {
   "table": [
    {"split": "fixture", "macroF1": "0.00", "note": "replace with evaluated output"},
-   {"split": "test_id", "macroF1": "pending", "note": "requires csi-bench download"}
+   {"split": "test_id", "macroF1": "pending", "note": "requires csi-bench Module B subset"}
   ],
   "confusion": {
-   "labels": ["standing", "sitting", "walking", "lying"],
-   "matrix": [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+   "labels": ["jumping", "running", "seated-breathing", "walking", "wavinghand"],
+   "matrix": [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
   }
  }
 }

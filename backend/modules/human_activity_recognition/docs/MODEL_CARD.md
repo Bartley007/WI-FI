@@ -6,7 +6,7 @@ Research prototype for single-person indoor WiFi CSI activity recognition. It is
 
 ## Classes
 
-`standing`, `sitting`, `walking`, `lying`; `transition` and `unknown` are decision states.
+`jumping`, `running`, `seated-breathing`, `walking`, `wavinghand`; `transition` and `unknown` are decision states.
 
 ## Models
 
@@ -16,6 +16,8 @@ Research prototype for single-person indoor WiFi CSI activity recognition. It is
 ## Evaluation
 
 - Macro-F1 primary target: `>= 0.80`.
+- Current 3,000-session real-data subset (2,000 train / 500 validation / 500 test), three seeds: accuracy `0.907 ± 0.008`, Macro-F1 `0.907 ± 0.008` on the official test split.
+- The result meets the `0.80` Macro-F1 target on this in-distribution HP-device subset; cross-device validation is still required.
 - Per-class precision, recall and confusion matrix.
 - Expected calibration error.
 - End-to-end latency under one second for the five-second window.
@@ -23,7 +25,9 @@ Research prototype for single-person indoor WiFi CSI activity recognition. It is
 
 ## Known limitations
 
-- The repository does not include the 81 GB csi-bench download; real dataset results require the configured local dataset.
-- The bundled website replay remains a fixture until a real run is exported.
-- The four classes are treated as mutually exclusive stable states; transitions are a separate decision state.
+- The repository does not include the 81 GB csi-bench download; the ignored local subset has 3,000 sessions.
+- The subset used for this evaluation contains only the `HP` device; cross-device robustness is unverified.
+- Jumping and running account for most remaining errors; all classes exceed 0.88 F1 on the held-out test split.
+- The bundled website replay remains a fixture until a reviewed real run is exported.
+- The five official classes are treated as mutually exclusive stable states; transitions are a separate decision state.
 - Multi-person co-occurrence is out of scope.

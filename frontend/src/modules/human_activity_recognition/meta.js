@@ -4,7 +4,7 @@ export default {
   navLabel: "Human activity",
   title: "Human activity recognition",
   role: "activity",
-  blurb: "Four stable states with probabilities, confidence, stability and transition handling.",
+  blurb: "Five official activity classes with probabilities, confidence, stability and transition handling.",
   owner: 'Member B',
   summarize: (f) => {
     const name = String(f.activity || 'unknown').replace(/^./, (c) => c.toUpperCase())

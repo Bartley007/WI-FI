@@ -3,7 +3,7 @@
 The module converts a five-second csi-bench CSI window into an explainable single-person activity decision:
 
 ```text
-standing | sitting | walking | lying | transition | unknown
+jumping | running | seated-breathing | walking | wavinghand | transition | unknown
 ```
 
 `transition` and `unknown` are decision states, not training classes.
@@ -47,18 +47,20 @@ Local fixture only:
 python3 backend/modules/human_activity_recognition/scripts/run_local_fixture.py
 ```
 
-Prepare only the module's real-data subset from an existing Kaggle ZIP:
+Download a deterministic Module B subset directly from Kaggle:
 
 ```bash
-python3 backend/modules/human_activity_recognition/scripts/prepare_local_subset.py \
-  --archive /path/to/csi-bench.zip \
-  --destination backend/modules/human_activity_recognition/local_data/csi_bench_module_b
+python3 backend/modules/human_activity_recognition/scripts/download_official_subset.py \
+  --samples-per-class 100 --num-sub 232 --prune
 export HAR_DATA_ROOT="$PWD/backend/modules/human_activity_recognition/local_data/csi_bench_module_b"
 python3 -m backend.modules.human_activity_recognition.cli manifest
-python3 -m backend.modules.human_activity_recognition.cli train --model cnn_transformer
+python3 -m backend.modules.human_activity_recognition.cli train-spectral --seed 42
 ```
 
-The subset contains only `Multitask/HumanActivityRecognition/` and `Multitask/sub_Human_h5/`. Unrelated task directories are never extracted.
+Alternatively, extract the same layout from an existing Kaggle ZIP with
+`scripts/prepare_local_subset.py`. The subset contains only
+`Multitask/HumanActivityRecognition/` and `Multitask/sub_Human_h5/`; unrelated task
+directories are never extracted.
 
 Replay-only development:
 
@@ -90,4 +92,9 @@ npm --prefix frontend run build
 
 ## Current limitation
 
-The code path and local HDF5 fixture pipeline are implemented and tested. The full csi-bench dataset is not committed; extract only the Module B subset with `prepare_local_subset.py`. Real benchmark numbers remain pending until that subset is available locally, so the bundled website replay remains a fixture (`mock: true`).
+The code path and local HDF5 fixture pipeline are implemented and tested. The full
+csi-bench dataset is not committed. On the ignored 3,000-session Module B subset
+(2,000 train / 500 validation / 500 test), the optimized spectral ExtraTrees route
+reaches accuracy `0.907 ± 0.008` and Macro-F1 `0.907 ± 0.008` across three seeds,
+meeting the `>= 0.80` target. Cross-device validation remains pending. The bundled
+website replay remains a fixture (`mock: true`).

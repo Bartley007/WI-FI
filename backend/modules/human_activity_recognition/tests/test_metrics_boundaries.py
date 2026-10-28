@@ -28,4 +28,4 @@ class MetricsBoundaryTest(unittest.TestCase):
     def test_calibration_and_top_confusions(self):
         error = expected_calibration_error([0, 1], [[0.9, 0.1], [0.4, 0.6]])
         self.assertGreaterEqual(error, 0)
-        self.assertEqual(top_confusions([0, 1], [1, 1], ["standing", "sitting"])[0]["true"], "standing")
+        self.assertEqual(top_confusions([0, 1], [1, 1], ["jumping", "running"])[0]["true"], "jumping")

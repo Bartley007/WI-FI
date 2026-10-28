@@ -1,6 +1,7 @@
 {
-  "0": "standing",
-  "1": "sitting",
-  "2": "walking",
-  "3": "lying"
+  "0": "jumping",
+  "1": "running",
+  "2": "seated-breathing",
+  "3": "walking",
+  "4": "wavinghand"
 }

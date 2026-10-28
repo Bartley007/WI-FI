@@ -22,16 +22,29 @@ class QualityReport:
 
 def orient_window(array: np.ndarray, expected_feature_size: int) -> np.ndarray:
     values = np.asarray(array)
+    if values.ndim == 3:
+        if values.shape[-1] == 1:
+            values = values[..., 0]
+        elif values.shape[0] == 1:
+            values = values[0]
+        else:
+            raise DataValidationError("CSI window has an unsupported 3-D shape", {"shape": list(values.shape)})
     if values.ndim == 1:
         values = values.reshape(1, -1)
     if values.ndim != 2:
-        raise DataValidationError("CSI window must be two-dimensional", {"shape": list(values.shape)})
+        raise DataValidationError(
+            "CSI window must be two-dimensional after singletons are removed", {"shape": list(values.shape)}
+        )
     if values.shape[0] == expected_feature_size:
         return values
     if values.shape[1] == expected_feature_size:
         return values.T
+    if values.shape[0] < expected_feature_size:
+        padded = np.zeros((expected_feature_size, values.shape[1]), dtype=values.dtype)
+        padded[: values.shape[0], :] = values
+        return padded
     raise DataValidationError(
-        "CSI window does not contain the configured feature dimension",
+        "CSI window has more features than the configured feature dimension",
         {"shape": list(values.shape), "expected_feature_size": expected_feature_size},
     )
 

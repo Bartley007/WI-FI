@@ -7,14 +7,15 @@ Primary output contract: `activity`, `confidence`, `stable`, plus backward-compa
 
 ## 1. Goals
 
-Recognise four stable single-person states:
+Recognise the five official single-person activity classes:
 
 | Stable id | Meaning |
 |---|---|
-| `standing` | standing still |
-| `sitting` | seated |
+| `jumping` | jumping |
+| `running` | running |
+| `seated-breathing` | seated breathing |
 | `walking` | walking |
-| `lying` | lying or reclining |
+| `wavinghand` | waving hand |
 
 `transition` and `unknown` are decision states, not training classes.
 
@@ -65,7 +66,7 @@ frontend/src/modules/human_activity_recognition/
 ## 4. Naming and identifiers
 
 - Module id: `human_activity_recognition`.
-- Stable activity ids are lowercase snake-less slugs: `standing`, `sitting`, `walking`, `lying`.
+- Stable activity ids are the official lowercase slugs: `jumping`, `running`, `seated-breathing`, `walking`, `wavinghand`.
 - Sample id: deterministic BLAKE2b hash of source-relative path, row index and source record id.
 - Model version: caller supplied, for example `b-0.1.0-20261017`.
 - Configuration keys use `snake_case`.
@@ -118,7 +119,7 @@ The loader:
 - preserves user, environment, device and session identifiers;
 - rejects non-finite arrays, empty windows and shape mismatches;
 - computes normalisation statistics from the training split only;
-- validates that group identifiers never cross official split boundaries.
+- enforces the configured split-group field (`session_id` for the official in-distribution split) and evaluates user, environment and device shift through dedicated OOD split files.
 
 ## 7. Error model
 

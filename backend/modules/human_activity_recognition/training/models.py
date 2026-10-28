@@ -1,4 +1,4 @@
-"""1D-CNN and CNN-Transformer models for four-state activity recognition."""
+"""1D-CNN and CNN-Transformer models for five-class activity recognition."""
 
 from __future__ import annotations
 

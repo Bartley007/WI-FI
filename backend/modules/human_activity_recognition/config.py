@@ -30,7 +30,9 @@ class DatasetConfig:
     expected_feature_size: int
     window_seconds: float
     min_frames: int
+    split_group_fields: tuple[str, ...]
     max_abs_amplitude: float
+    normalization: str
     allowed_roles: tuple[str, ...]
 
 
@@ -52,6 +54,24 @@ class ModelConfig:
     transformer_layers: int
     max_parameters: int
     seeds: tuple[int, ...]
+    augmentation_enabled: bool
+    augmentation_max_shift: int
+    augmentation_amplitude_scale: float
+    augmentation_noise_std: float
+
+
+@dataclass(frozen=True)
+class SpectralConfig:
+    top_features: int
+    extra_models: int
+    trees_per_model: int
+    min_samples_leaf: int
+    max_features: float
+    histogram_weight: float
+    histogram_iterations: int
+    histogram_learning_rate: float
+    histogram_leaf_nodes: int
+    histogram_l2: float
 
 
 @dataclass(frozen=True)
@@ -86,6 +106,7 @@ class AppConfig:
     module_id: str
     dataset: DatasetConfig
     model: ModelConfig
+    spectral: SpectralConfig
     runtime: RuntimeConfig
     logging: LoggingConfig
     paths: PathConfig
@@ -153,6 +174,7 @@ def load_config(path: str | Path | None = None, *, env: Mapping[str, str] | None
 
     ds = _require_mapping(raw.get("dataset"), "dataset")
     model = _require_mapping(raw.get("model"), "model")
+    spectral = _require_mapping(raw.get("spectral"), "spectral")
     runtime = _require_mapping(raw.get("runtime"), "runtime")
     logging_cfg = _require_mapping(raw.get("logging"), "logging")
     paths = _require_mapping(raw.get("paths"), "paths")
@@ -180,9 +202,19 @@ def load_config(path: str | Path | None = None, *, env: Mapping[str, str] | None
         expected_feature_size=int(_positive(ds["expected_feature_size"], "dataset.expected_feature_size")),
         window_seconds=_positive(ds["window_seconds"], "dataset.window_seconds"),
         min_frames=int(_positive(ds["min_frames"], "dataset.min_frames")),
+        split_group_fields=tuple(str(v) for v in _tuple(ds["split_group_fields"], "dataset.split_group_fields")),
         max_abs_amplitude=_positive(ds["max_abs_amplitude"], "dataset.max_abs_amplitude"),
+        normalization=str(ds.get("normalization", "global_zscore")),
         allowed_roles=tuple(str(v) for v in _tuple(ds["allowed_roles"], "dataset.allowed_roles")),
     )
+    if dataset.normalization not in {"global_zscore", "window_zscore"}:
+        raise ConfigurationError(
+            "dataset.normalization must be global_zscore or window_zscore",
+            {"normalization": dataset.normalization},
+        )
+    augmentation = model.get("augmentation", {})
+    if not isinstance(augmentation, Mapping):
+        raise ConfigurationError("model.augmentation must be a mapping")
     model_cfg = ModelConfig(
         default_name=str(model["default_name"]),
         candidates=tuple(str(v) for v in _tuple(model["candidates"], "model.candidates")),
@@ -200,7 +232,31 @@ def load_config(path: str | Path | None = None, *, env: Mapping[str, str] | None
         transformer_layers=int(_positive(model["transformer_layers"], "model.transformer_layers")),
         max_parameters=int(_positive(model["max_parameters"], "model.max_parameters")),
         seeds=tuple(int(v) for v in _tuple(model["seeds"], "model.seeds")),
+        augmentation_enabled=bool(augmentation.get("enabled", False)),
+        augmentation_max_shift=int(
+            _positive(augmentation.get("max_shift", 8), "model.augmentation.max_shift", allow_zero=True)
+        ),
+        augmentation_amplitude_scale=_positive(
+            augmentation.get("amplitude_scale", 0.05), "model.augmentation.amplitude_scale", allow_zero=True
+        ),
+        augmentation_noise_std=_positive(
+            augmentation.get("noise_std", 0.005), "model.augmentation.noise_std", allow_zero=True
+        ),
     )
+    spectral_cfg = SpectralConfig(
+        top_features=int(_positive(spectral["top_features"], "spectral.top_features")),
+        extra_models=int(_positive(spectral["extra_models"], "spectral.extra_models")),
+        trees_per_model=int(_positive(spectral["trees_per_model"], "spectral.trees_per_model")),
+        min_samples_leaf=int(_positive(spectral["min_samples_leaf"], "spectral.min_samples_leaf")),
+        max_features=_positive(spectral["max_features"], "spectral.max_features"),
+        histogram_weight=_positive(spectral["histogram_weight"], "spectral.histogram_weight", allow_zero=True),
+        histogram_iterations=int(_positive(spectral["histogram_iterations"], "spectral.histogram_iterations")),
+        histogram_learning_rate=_positive(spectral["histogram_learning_rate"], "spectral.histogram_learning_rate"),
+        histogram_leaf_nodes=int(_positive(spectral["histogram_leaf_nodes"], "spectral.histogram_leaf_nodes")),
+        histogram_l2=_positive(spectral["histogram_l2"], "spectral.histogram_l2", allow_zero=True),
+    )
+    if spectral_cfg.histogram_weight > 1.0:
+        raise ConfigurationError("spectral.histogram_weight must be between 0 and 1")
     runtime_cfg = RuntimeConfig(
         mode=mode,
         remote_endpoint_env=str(runtime["remote_endpoint_env"]),
@@ -226,6 +282,7 @@ def load_config(path: str | Path | None = None, *, env: Mapping[str, str] | None
         module_id=MODULE_ID,
         dataset=dataset,
         model=model_cfg,
+        spectral=spectral_cfg,
         runtime=runtime_cfg,
         logging=logging_config,
         paths=PathConfig(output_root=output_root, data_roots=data_roots),

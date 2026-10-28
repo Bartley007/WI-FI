@@ -11,19 +11,21 @@ from .errors import InputValidationError
 
 
 class ActivityState(str, Enum):
-    STANDING = "standing"
-    SITTING = "sitting"
+    JUMPING = "jumping"
+    RUNNING = "running"
+    SEATED_BREATHING = "seated-breathing"
     WALKING = "walking"
-    LYING = "lying"
+    WAVING_HAND = "wavinghand"
     TRANSITION = "transition"
     UNKNOWN = "unknown"
 
 
 STABLE_STATES: tuple[ActivityState, ...] = (
-    ActivityState.STANDING,
-    ActivityState.SITTING,
+    ActivityState.JUMPING,
+    ActivityState.RUNNING,
+    ActivityState.SEATED_BREATHING,
     ActivityState.WALKING,
-    ActivityState.LYING,
+    ActivityState.WAVING_HAND,
 )
 CLASS_ID_TO_STATE = {index: state for index, state in enumerate(STABLE_STATES)}
 STATE_TO_CLASS_ID = {state: index for index, state in CLASS_ID_TO_STATE.items()}

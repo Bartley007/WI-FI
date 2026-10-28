@@ -9,10 +9,13 @@ FRAME_FIELDS = ["activity", "confidence", "stable"]
 OPTIONAL_FRAME_FIELDS = ["activity_id", "probabilities", "stability", "quality", "model_version", "transition"]
 
 FIELD_NOTES = {
-    "activity": "stable activity id: standing, sitting, walking or lying; decision state: transition or unknown",
+    "activity": (
+        "stable activity id: jumping, running, seated-breathing, walking or wavinghand; "
+        "decision state: transition or unknown"
+    ),
     "confidence": "probability of the selected decision, 0 to 1",
     "stable": "true only for a stable, sufficiently confident state",
-    "activity_id": "optional stable class id 0..3 for stable states, null for decision states",
+    "activity_id": "optional stable class id 0..4 for stable states, null for decision states",
     "probabilities": "optional mapping of stable ids to probabilities",
     "stability": "optional 0..1 temporal continuity score",
     "quality": "optional input quality: good, degraded or invalid",
@@ -24,7 +27,7 @@ FIELD_NOTES = {
 def validate_frame_values(payload: dict) -> list[str]:
     """Validate value domains that the generic repository contract cannot know."""
     problems: list[str] = []
-    allowed = {"standing", "sitting", "walking", "lying", "transition", "unknown"}
+    allowed = {"jumping", "running", "seated-breathing", "walking", "wavinghand", "transition", "unknown"}
     for index, frame in enumerate(payload.get("frames", [])):
         activity = frame.get("activity")
         if activity not in allowed:

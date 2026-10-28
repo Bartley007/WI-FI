@@ -22,7 +22,7 @@ def main() -> int:
     from backend.modules.human_activity_recognition.service import build_policy
 
     parser = argparse.ArgumentParser(description="Evaluate Module B candidates on the local synthetic fixture")
-    parser.add_argument("--epochs", type=int, default=500)
+    parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--seeds", default="42,43,44")
     parser.add_argument("--models", default="cnn_1d,cnn_transformer")
     args = parser.parse_args()
@@ -33,7 +33,7 @@ def main() -> int:
     config = load_config(env={"HAR_DATA_ROOT": str(fixture), "HAR_OUTPUT_ROOT": str(output)})
     config = replace(
         config,
-        model=replace(config.model, epochs=args.epochs, patience=5, hidden_dim=32, seeds=tuple(seeds)),
+        model=replace(config.model, epochs=args.epochs, patience=8, hidden_dim=16, seeds=tuple(seeds)),
     )
     bundle = load_dataset_split(config, build_policy(config))
     results: list[dict] = []

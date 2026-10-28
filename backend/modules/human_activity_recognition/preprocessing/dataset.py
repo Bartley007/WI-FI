@@ -27,7 +27,7 @@ SPLIT_ALIASES = {
 
 META_FIELDS = {
     "sample_id": ("sample_id", "id", "record_id"),
-    "path": ("path", "file", "relative_path", "h5_path"),
+    "path": ("path", "file", "file_path", "relative_path", "h5_path"),
     "session_id": ("session_id", "session", "recording_id"),
     "user_id": ("user_id", "user", "subject_id", "participant_id"),
     "environment_id": ("environment_id", "environment", "env", "room_id"),
@@ -218,7 +218,11 @@ def discover_records(config: AppConfig, policy: AccessPolicy, *, actor: str = "s
     if not records:
         for path in sorted(sample_root.glob(config.dataset.h5_glob)):
             resolved = policy.authorize_read(actor, path)
-            relative_path = resolved.relative_to(task_root)
+            relative_path = (
+                resolved.relative_to(task_root)
+                if resolved.is_relative_to(task_root)
+                else resolved.relative_to(sample_root)
+            )
             ids = _path_ids(relative_path)
             activity_text = next((part for part in relative_path.parts if part.lower().startswith("act_")), "")
             if not activity_text:

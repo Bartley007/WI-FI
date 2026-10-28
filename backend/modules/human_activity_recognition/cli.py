@@ -12,6 +12,7 @@ from pathlib import Path
 from .config import load_config, redacted_config
 from .errors import ModuleBError
 from .experiments import load_dataset_split, run_single_model, synthetic_split_bundle
+from .experiments.spectral import run_spectral_experiment
 from .logging_utils import operation
 from .preprocessing import write_manifest
 from .security import AccessPolicy
@@ -42,6 +43,10 @@ def build_parser() -> argparse.ArgumentParser:
     real.add_argument("--seed", type=int, default=42)
     real.add_argument("--output-dir", type=Path, default=None)
     real.add_argument("--checkpoint", type=Path, default=None)
+
+    spectral = sub.add_parser("train-spectral", help="train the optimized CSI spectral-feature ensemble")
+    spectral.add_argument("--seed", type=int, default=42)
+    spectral.add_argument("--output-dir", type=Path, default=None)
 
     sub.add_parser("self-check", help="run import, contract and synthetic inference checks")
     return parser
@@ -103,6 +108,23 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(
                 json.dumps(
                     {"ok": True, "macro_f1": result["metrics"]["macro_f1"], "output_dir": str(destination)},
+                    sort_keys=True,
+                )
+            )
+            return 0
+        if args.command == "train-spectral":
+            destination = args.output_dir or config.paths.output_root / "spectral"
+            policy = build_policy(config)
+            bundle = load_dataset_split(config, policy)
+            result = run_spectral_experiment(bundle, config, seed=args.seed, output_dir=destination)
+            print(
+                json.dumps(
+                    {
+                        "ok": True,
+                        "accuracy": result["metrics"]["accuracy"],
+                        "macro_f1": result["metrics"]["macro_f1"],
+                        "output_dir": str(destination),
+                    },
                     sort_keys=True,
                 )
             )

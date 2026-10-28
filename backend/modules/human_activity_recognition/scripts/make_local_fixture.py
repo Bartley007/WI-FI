@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[4]
 FIXTURE = ROOT / "backend/modules/human_activity_recognition/fixtures/mini_csi_bench"
 TASK = FIXTURE / "Multitask/HumanActivityRecognition"
 SAMPLES = FIXTURE / "Multitask/sub_Human_h5"
-CLASSES = ("standing", "sitting", "walking", "lying")
+CLASSES = ("jumping", "running", "seated-breathing", "walking", "wavinghand")
 
 
 def main() -> int:

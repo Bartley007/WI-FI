@@ -30,7 +30,10 @@ class ServiceEndToEndTest(unittest.TestCase):
                     feature_size=config.dataset.expected_feature_size, frames=max(24, config.dataset.min_frames)
                 )
             )
-            self.assertIn(prediction.activity.value, {"standing", "sitting", "walking", "lying", "unknown"})
+            self.assertIn(
+                prediction.activity.value,
+                {"jumping", "running", "seated-breathing", "walking", "wavinghand", "unknown"},
+            )
             self.assertGreaterEqual(prediction.confidence, 0.0)
             self.assertLessEqual(prediction.confidence, 1.0)
 
