@@ -122,3 +122,32 @@ button{font:inherit}
 .ideas .card{margin:0}
 .idea-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;font-size:14px}
 .idea-list li{padding-left:14px;border-left:2px solid var(--accent)}
+
+@media (max-width:720px){
+  .top{gap:12px 16px;padding:18px 0 14px}
+  .brand{flex:1 1 auto;min-width:0}
+  .brand span{font-size:18px}
+  .badge{display:none}
+  .topnav{order:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));flex:0 0 100%;width:100%;min-width:0;gap:6px 12px;font-size:14px}
+  .topnav a{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mhead{gap:12px;padding-left:14px;margin-left:0}
+  .mhead-text{flex-basis:100%}
+  .mhead h1{font-size:clamp(28px,8vw,38px);overflow-wrap:anywhere}
+  .mhead .lead{font-size:15px;line-height:1.55}
+  .mhead .state-pill{order:-1}
+  .prob-name{flex:0 0 88px;width:88px}
+  .prob-row{gap:8px}
+  .prob-val{width:36px}
+  .stage-head h2{font-size:22px}
+  .stage-num{width:38px;height:38px}
+  .ideas{grid-template-columns:1fr}
+  .hero h1{font-size:clamp(36px,12vw,52px)}
+}
+
+@media (max-width:720px){
+  .stage-body,.stage-body>.card{min-width:0;max-width:100%}
+  .stage-body>.card{overflow:hidden}
+  .tblwrap{width:100%;max-width:100%;overflow-x:auto}
+  .plan li{min-width:0}
+  .plan li span:last-child{min-width:0;overflow-wrap:anywhere}
+}
