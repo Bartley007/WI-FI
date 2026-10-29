@@ -1,37 +1,114 @@
 {
  "module": "human_activity_recognition",
- "version": "0.1",
+ "version": "0.3.0",
  "mock": true,
+ "model_version": "fixture-cnn-transformer",
  "frames": [
   {
    "t": 0,
-   "activity": "none",
-   "confidence": 0,
-   "stable": false
-  },
-  {
-   "t": 12,
-   "activity": "Walking",
+   "activity": "jumping",
+   "activity_id": 0,
    "confidence": 0.88,
-   "stable": true
+   "stable": true,
+   "probabilities": {"jumping": 0.88, "running": 0.04, "seated-breathing": 0.02, "walking": 0.03, "wavinghand": 0.03},
+   "stability": 0.81,
+   "quality": "good"
   },
   {
-   "t": 35,
-   "activity": "Sitting",
-   "confidence": 0.79,
-   "stable": true
+   "t": 5,
+   "activity": "running",
+   "activity_id": 1,
+   "confidence": 0.9,
+   "stable": true,
+   "probabilities": {"jumping": 0.03, "running": 0.9, "seated-breathing": 0.02, "walking": 0.03, "wavinghand": 0.02},
+   "stability": 0.84,
+   "quality": "good"
   },
   {
-   "t": 48,
-   "activity": "Transition",
-   "confidence": 0.41,
-   "stable": false
+   "t": 10,
+   "activity": "transition",
+   "activity_id": null,
+   "confidence": 0.47,
+   "stable": false,
+   "transition": true,
+   "probabilities": {"jumping": 0.08, "running": 0.47, "seated-breathing": 0.15, "walking": 0.18, "wavinghand": 0.12},
+   "stability": 0.17,
+   "quality": "good"
   },
   {
-   "t": 56,
-   "activity": "Uncertain",
-   "confidence": 0.35,
-   "stable": false
+   "t": 15,
+   "activity": "seated-breathing",
+   "activity_id": 2,
+   "confidence": 0.84,
+   "stable": true,
+   "probabilities": {"jumping": 0.02, "running": 0.02, "seated-breathing": 0.84, "walking": 0.05, "wavinghand": 0.07},
+   "stability": 0.76,
+   "quality": "good"
+  },
+  {
+   "t": 20,
+   "activity": "walking",
+   "activity_id": 3,
+   "confidence": 0.87,
+   "stable": true,
+   "probabilities": {"jumping": 0.02, "running": 0.06, "seated-breathing": 0.02, "walking": 0.87, "wavinghand": 0.03},
+   "stability": 0.8,
+   "quality": "good"
+  },
+  {
+   "t": 25,
+   "activity": "wavinghand",
+   "activity_id": 4,
+   "confidence": 0.82,
+   "stable": true,
+   "probabilities": {"jumping": 0.03, "running": 0.02, "seated-breathing": 0.02, "walking": 0.11, "wavinghand": 0.82},
+   "stability": 0.71,
+   "quality": "good"
+  },
+  {
+   "t": 30,
+   "activity": "unknown",
+   "activity_id": null,
+   "confidence": 0.39,
+   "stable": false,
+   "probabilities": {"jumping": 0.18, "running": 0.22, "seated-breathing": 0.39, "walking": 0.12, "wavinghand": 0.09},
+   "stability": 0.08,
+   "quality": "degraded"
   }
- ]
+ ],
+ "preprocessing": {
+  "tiles": [
+   {"label": "Task", "value": "HumanActivityRecognition"},
+   {"label": "Window", "value": "5 s"},
+   {"label": "Feature size", "value": "232"},
+   {"label": "Split guard", "value": "session/user/env/device"}
+  ],
+  "table": [
+   {"group": "train", "policy": "official or deterministic holdout", "normalisation": "train only"},
+   {"group": "validation", "policy": "used for early stopping", "normalisation": "frozen train statistics"},
+   {"group": "test", "policy": "never used for tuning", "normalisation": "frozen train statistics"}
+  ]
+ },
+ "training": {
+  "table": [
+   {"model": "cnn_1d", "parameters": "pending real run", "seed": "42/43/44"},
+   {"model": "cnn_transformer", "parameters": "pending real run", "seed": "42/43/44"}
+  ]
+ },
+ "experiments": {
+  "table": [
+   {"model": "cnn_1d", "status": "implemented", "metric": "pending real dataset run"},
+   {"model": "cnn_transformer", "status": "implemented", "metric": "pending real dataset run"}
+  ]
+ },
+ "metrics": {
+  "table": [
+   {"split": "fixture", "macroF1": "0.00", "note": "replace with evaluated output"},
+   {"split": "test_id", "macroF1": "pending", "note": "requires csi-bench Module B subset"}
+  ],
+  "confusion": {
+   "labels": ["jumping", "running", "seated-breathing", "walking", "wavinghand"],
+   "matrix": [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
+  }
+ }
 }
