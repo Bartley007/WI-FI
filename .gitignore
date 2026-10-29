@@ -8,6 +8,7 @@ __pycache__/
 node_modules/
 dist/
 .env.local
+/data/
 backend/modules/*/outputs/*
 !backend/modules/*/outputs/.gitkeep
 !backend/modules/*/outputs/replay.json
