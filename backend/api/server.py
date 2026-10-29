@@ -20,6 +20,6 @@ class Handler(BaseHTTPRequestHandler):
         print(f"{self.address_string()} {fmt % args}")
 
 
-def serve(port: int = 8000) -> None:
-    print(f"Serving {len(routes.MODULES)} modules on http://localhost:{port}: {', '.join(sorted(routes.MODULES))}")
-    ThreadingHTTPServer(("", port), Handler).serve_forever()
+def serve(port: int = 8000, host: str = "127.0.0.1") -> None:
+    print(f"Serving {len(routes.MODULES)} modules on http://{host}:{port}: {', '.join(sorted(routes.MODULES))}")
+    ThreadingHTTPServer((host, port), Handler).serve_forever()
