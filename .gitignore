@@ -33,3 +33,7 @@ backend/modules/*/local_data/
 
 # Also ignore a dependency-directory symlink used for local validation
 node_modules
+
+# Downloaded release model archives
+model_artifacts/downloads/
+*.restore-partial

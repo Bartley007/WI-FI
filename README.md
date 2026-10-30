@@ -2,6 +2,8 @@
 
 ## B + C 集成演示（2026-10-30）
 
+B/C训练权重和配套模型数据见 [模型发布与恢复说明](model_artifacts/README.md)。运行 `python3 scripts/restore_bc_models.py` 恢复当前模型，添加 `--all` 可恢复所有35个历史/当前权重文件。
+
 代码交付、模型文件位置及独立HP混合ResNet18候选的结果见 [B/C代码交付说明](docs/BC_RESNET18_CODE_DELIVERY.md)。候选模型未替换当前运行模型。
 
 最新默认规则：B置信度<0.6才运行C；高置信度时C未评估，不表示未跌倒。验证回放会跳过51条真实Fall，具体见[门控说明](docs/B_LOW_CONFIDENCE_GATE.md)。下段保留此前并行接口背景。
