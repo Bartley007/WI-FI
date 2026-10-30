@@ -45,7 +45,7 @@ Full tables and per-sample evidence: [comparison report](../backend/modules/fall
 
 ## Model files and data
 
-Raw CSI, NumPy caches, checkpoints, joblib models, temporary browser outputs and model ZIPs are not Git source files in this delivery. Existing weights remain in the project handoff storage.
+Raw CSI, NumPy caches, checkpoints, joblib models, temporary browser outputs and model ZIPs are not Git source files. All 35 local B/C checkpoints and their companion files are versioned separately in the [matching model Release](https://github.com/Slyvia0425/WI-FI/releases/tag/bc-models-20261031-v1). See [model restoration](../model_artifacts/README.md) for checksum-verified downloads (`python3 scripts/restore_bc_models.py`, or add `--all` for every research version).
 
 | Artifact | Expected repository-relative path | SHA256 |
 |---|---|---|
@@ -53,7 +53,7 @@ Raw CSI, NumPy caches, checkpoints, joblib models, temporary browser outputs and
 | New HP candidate | `backend/modules/fall_detection/outputs/hp_mixed_resnet18_v1/best.pt` | `9ec1016f6d3fbce2f76b686ba839a90e1baa6ba882102f9af28fd5599ae9ae9d` |
 | Released B | `backend/modules/human_activity_recognition/outputs/released_v1/optimized_final/spectral/seed-42-stable/model.joblib` | `bb991b90504f5520cdf83fb9a07b1b39cf3d1c20a6b875ff1a2ffcf24dec7687` |
 
-B is available in the author's [release](https://github.com/Bartley007/WI-FI/releases/tag/module-b-data-models-v1). Restore C weights from the existing project handoff; preserve the exact paths and hashes above before invoking real model inference. Restoring a different checkpoint must not silently replace the frozen application model.
+B originally comes from the author's [release](https://github.com/Bartley007/WI-FI/releases/tag/module-b-data-models-v1). The matching B/C Release preserves the exact paths and hashes above before real inference. Its restore script refuses to overwrite a different local model. The candidate remains separate from the frozen application model.
 
 Dataset download and audit scripts are included. Official metadata/split snapshots and selected sample identities are in the reports; actual CSI arrays are excluded. Some historical research scripts retain the author's local paths and require path configuration on another machine. For the mixed-data preparation, `MIXED_HP_DATA_ROOT` sets a portable raw-data root while preserving the predeclared selection.
 
