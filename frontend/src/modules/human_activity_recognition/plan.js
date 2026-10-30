@@ -1,24 +1,22 @@
-// Plan for this module. Statuses describe implemented code versus work still requiring the real dataset.
-const p = (t, s = 'planned') => ({ t, s })
-
+// Current integration state; original training source is preserved separately.
+const p = (t, s = 'done') => ({ t, s })
 export default {
   preprocessing: [
-    p("Read HumanActivityRecognition HDF5, metadata and official splits; keep user, environment, device ids", 'done'),
-    p("Validate official five labels, shapes, finite values, signal quality and split-group leakage", 'done'),
-    p("Fit normalisation on training data only and serialise feature statistics with the model", 'done'),
+    p('Read exactly the same HP raw amplitude [232,500] as C; match raw-input identity'),
+    p('Use the released spectral branch: 4195 features, fixed selector keeps 2800'),
+    p('Keep B spectral preprocessing separate from C ResNet per-record normalization'),
   ],
   training: [
-    p("1D-CNN baseline for local temporal features", 'done'),
-    p("CNN-Transformer for longer-range changes", 'done'),
-    p("Deterministic seeds, class weights, early stopping and checkpoint metadata", 'done'),
+    p('Load author-released ExtraTrees seed42, 900 trees; no new training'),
+    p("Preserve the author's CNN and other-seed artifacts separately"),
   ],
   experiments: [
-    p("Compare 1D-CNN and CNN-Transformer on identical splits and seeds", 'doing'),
-    p("Run three seeds and report mean and standard deviation with the real dataset", 'doing'),
+    p('Run frozen B on C HP validation inputs as advisory context'),
+    p('B has five activity classes and no Fall class; no score fusion or veto'),
   ],
   evaluation: [
-    p("Five-class macro-F1, per-class precision and recall, confusion matrix and calibration error", 'done'),
-    p("OOD results across user, environment and device with transition and quality slices", 'doing'),
-    p("Export activity, confidence and stable fields plus probabilities and model version", 'done'),
+    p('Verify paired raw-input identity and preserve C scores and threshold'),
+    p('Export activity, five-class probabilities, confidence flag and model version'),
+    p('Evaluate joint performance with activity ground truth and audited cross-task splits', 'planned'),
   ],
 }
