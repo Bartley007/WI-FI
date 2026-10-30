@@ -97,4 +97,6 @@ csi-bench dataset is not committed. On the ignored 3,000-session Module B subset
 (2,000 train / 500 validation / 500 test), the optimized spectral ExtraTrees route
 reaches accuracy `0.907 ± 0.008` and Macro-F1 `0.907 ± 0.008` across three seeds,
 meeting the `>= 0.80` target. Cross-device validation remains pending. The bundled
-website replay remains a fixture (`mock: true`).
+website replay now uses the released seed42 spectral model on the same raw HP FallDetection segments as Module C (`mock: false`). These inputs have no five-class HAR annotations, so no B accuracy or joint improvement is claimed. The original fixture is archived.
+
+The released joblib model uses `integration_v1/runtime.py`; the original `service.py` loads CNN PyTorch checkpoints. For current source, commands and limitations see [ResNet18 + B handoff](../../../docs/RESNET_B_HANDOFF.md).

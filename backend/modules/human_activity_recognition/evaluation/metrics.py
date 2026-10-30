@@ -48,7 +48,7 @@ def confusion_matrix(y_true: Sequence[int], y_pred: Sequence[int], num_classes: 
 
 
 def classification_metrics(y_true: Sequence[int], y_pred: Sequence[int], num_classes: int) -> ClassificationMetrics:
-    matrix = np.asarray(confusion_matrix(y_true, y_pred, num_classes), dtype=np.float64)
+    matrix: np.ndarray = np.asarray(confusion_matrix(y_true, y_pred, num_classes), dtype=np.float64)
     total = matrix.sum()
     precision: list[float] = []
     recall: list[float] = []

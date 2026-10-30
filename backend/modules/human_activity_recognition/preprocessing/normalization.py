@@ -47,8 +47,8 @@ class FeatureStats:
             scale = values.std(axis=1, keepdims=True)
             scale = np.where(scale < 1e-8, 1.0, scale)
             return (values - center) / scale
-        mean = np.asarray(self.mean, dtype=np.float32).reshape(-1, 1)
-        std = np.asarray(self.std, dtype=np.float32).reshape(-1, 1)
+        mean: np.ndarray = np.asarray(self.mean, dtype=np.float32).reshape(-1, 1)
+        std: np.ndarray = np.asarray(self.std, dtype=np.float32).reshape(-1, 1)
         if values.shape[0] != mean.shape[0]:
             raise DataValidationError("feature dimension does not match normalisation statistics")
         return (values - mean) / std

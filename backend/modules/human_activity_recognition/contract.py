@@ -6,7 +6,20 @@ must never be used as a substitute for a missing required field.
 
 FRAME_FIELDS = ["activity", "confidence", "stable"]
 
-OPTIONAL_FRAME_FIELDS = ["activity_id", "probabilities", "stability", "quality", "model_version", "transition"]
+OPTIONAL_FRAME_FIELDS = [
+    "activity_id",
+    "probabilities",
+    "stability",
+    "quality",
+    "model_version",
+    "transition",
+    "input_id",
+    "device",
+    "recording_id",
+    "clock_id",
+    "window_start",
+    "window_end",
+]
 
 FIELD_NOTES = {
     "activity": (

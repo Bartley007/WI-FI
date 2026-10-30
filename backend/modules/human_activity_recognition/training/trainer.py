@@ -52,7 +52,7 @@ def set_deterministic(seed: int) -> None:
 
 
 def class_weights(labels: Sequence[int], num_classes: int) -> torch.Tensor:
-    counts = np.bincount(np.asarray(labels, dtype=np.int64), minlength=num_classes).astype(np.float64)
+    counts: np.ndarray = np.bincount(np.asarray(labels, dtype=np.int64), minlength=num_classes).astype(np.float64)
     counts[counts == 0] = 1.0
     weights = counts.sum() / (num_classes * counts)
     return torch.tensor(weights, dtype=torch.float32)
